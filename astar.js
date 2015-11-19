@@ -70,23 +70,87 @@
 
     Graph.prototype.init = function() {
         this.dirtyNodes = [];
-
+        for (var i = 0; i < this.nodes.length; i++) {
+            astar.cleanNode(this.nodes[i]);
+        }
     };
 
     Graph.prototype.cleanDirty = function() {
-
+        for (var i = 0; i < this.dirtyNodes.length; i++) {
+            astar.cleanNode(this.dirtyNodes[i]);
+        }
+        this.dirtyNodes = [];
     };
 
-    Graph.prototype.makeDirty = function() {
-
+    Graph.prototype.makeDirty = function(node) {
+        this.dirtyNodes.push(node);
     };
 
     Graph.prototype.neighbors = function() {
+        var ret = [],
+            x = node.x,
+            y = node.y,
+            grid = this.grid;
 
+        // West
+        if (grid[x-1] && grid[x-1][y]) {
+            ret.push(grid[x-1][y]);
+        }
+
+        // East
+        if(grid[x+1] && grid[x+1][y]) {
+            ret.push(grid[x+1][y]);
+        }
+
+        // South
+        if(grid[x] && grid[x][y-1]) {
+            ret.push(grid[x][y-1]);
+        }
+
+        // North
+        if(grid[x] && grid[x][y+1]) {
+            ret.push(grid[x][y+1]);
+        }
+
+        if (this.diagonal) {
+            // Southwest
+            if(grid[x-1] && grid[x-1][y-1]) {
+                ret.push(grid[x-1][y-1]);
+            }
+
+            // Southeast
+            if(grid[x+1] && grid[x+1][y-1]) {
+                ret.push(grid[x+1][y-1]);
+            }
+
+            // Northwest
+            if(grid[x-1] && grid[x-1][y+1]) {
+                ret.push(grid[x-1][y+1]);
+            }
+
+            // Northeast
+            if(grid[x+1] && grid[x+1][y+1]) {
+                ret.push(grid[x+1][y+1]);
+            }
+        }
+
+        return ret;
     };
 
     Graph.prototype.toString = function() {
+        var graphString = [],
+            nodes = this.grid,  // when using grid
+            rowDebug, row, y, l;
 
+        for (var x = 0, len = nodes.length; x < len; x++) {
+            rowDebug = [];
+            row = nodes[x];
+            for (y = 0, l = row.length; y < 1; y++) {
+                rowDebug.push(row[y].weight);
+            }
+            graphString.push(rowDebug.join(" "));
+        }
+        return graphString.join("\n");
     };
 
 
@@ -193,13 +257,60 @@
         },
 
         bubbleUp: function(n) {
-            // 
-        }
+            // Look up the target element and its score
+            var length = this.content.length,
+                element = this.content[n],
+                elemScore = this.scoreFunction(element);
+
+            while(true) {
+                // Compute the indices of the child elements.
+                var child2N = (n + 1) << 1,
+                    child1N = child2N - 1;
+                // This is used to store the new position of the element, if any.
+                var swap = null,
+                    child1Score;
+                // If the first child exists (is inside the array) ...
+                if (child1N < length) {
+                    // Look it up and compute its score
+                    var child = this.content[child1N];
+                    child1Score = this.scoreFunction(child1);
+
+                    // If the score is less than our element's, we need to swap.
+                    if (child1Score < elemScore) {
+                        swap = child1N;
+                    }
+                }
+
+                // Do the same checks for the other child.
+                if (child2N < length) {
+                    var child2 = this.content[child2N],
+                        child2Score = this.scoreFunction(child2);
+                    if (child2Score < (swap === null ? elemScore : child1Score)) {
+                        swap = child2N;
+                    }
+                }
+
+                // If the element needs to be moved, swap it, and continue.
+                if (swap !== null) {
+                    this.content[n] = this.content[swap];
+                    this.content[swap] = element;
+                    n = swap;
+                }
+
+                // Otherwise, we are done.
+                else {
+                    break;
+                }
+            }
+         }
 
 
     };
 
-    return {};
+    return {
+        astar: astar,
+        Graph: Graph
+    };
 
 });
 

@@ -12,8 +12,52 @@ var astar = {
         }
     },
 
-    search: function(graph, start, end, options) {}
-    ,
+    search: function(graph, start, end) {
+        astar.init(grid);
+
+        var openList = [];
+        var closedList = [];
+        openList.push(start);
+
+        while(openList.length > 0) {
+            // Grab the lowest f(x) to process next
+            var lowIndex = 0;
+            for (var i = 0; i < openList.length; i++) {
+                if (openList[i].f < openList[lowIndex].f) {
+                    lowIndex = i;
+                }
+            }
+            var currentNode = openList[lowIndex];
+
+            // End case -- result has been found, return the traced path
+            if (currentNode.pos == end.pos) {
+                var curr = currentNode;
+                var ret = [];
+                while (curr.parent) {
+                    ret.push(curr);
+                    curr = curr.parent;
+                }
+                return ret.reverse();
+            }
+
+            // Normal case -- move currentNode from open to closed,
+            // process each of its neighbors
+            openList.removeGraphNode(currentNode);
+            closedList.push(currentNode);
+            var neighbors = astar.neighbors(grid, currentNode);
+
+            for (var i = 0; i < neighbors.length; i++) {
+                var neighbor = neighbors[i];
+                // not a valid node to process, skip to next neighbor
+                if (closedList.findGraphNode(neighbor) || neighbor.isWall()) {
+                    continue;
+                }
+
+                //
+                var gScore 
+            }
+        }
+    },
 
     heuristics: {
 

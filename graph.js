@@ -1,13 +1,19 @@
-var WALL = 0,
-    performance = window.performance;
+// Sets up the page with a graph
 
-$(function() {
-
-});
-
-var css = {};
+var css = { start: "start", finish: "finish", wall: "wall", active:"active"};
+var log = function() {
+    try {
+        console.debug(arguments);
+    }
+    catch(e) {}
+};
 
 function GraphSearch($graph, options, implementation) {
+    this.$graph = $graph;
+    this.graphSet = [];
+    this.search = implementation;
+    this.opts = $.extend({wallFrequency:.1, debug:true, gridSize:10}, options);
+    this.initialize();
 
 }
 

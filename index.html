@@ -49,5 +49,24 @@
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="astar.js"></script>
     <script type="text/javascript" src="graph.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            var $grid = $("#search_grid");
+            var $selectWallFrequency = $("#selectWallFrequency");
+            var $selectGridSize = $("#selectGridSize");
+            var $checkDebug = $("#checkDebug");
+
+            var opts = {
+                wallFrequency: $selectWallFrequency.val(),
+                gridSize: $selectGridSize.val(),
+                debug: $checkDebug.attr("checked")
+            };
+
+            var grid = new GraphSearch($grid, opts, astar.search);
+        };
+    </script>
+
+
 </body>
 </html>

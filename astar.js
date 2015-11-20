@@ -53,172 +53,66 @@ var astar = {
                     continue;
                 }
 
-                //
-                var gScore 
+                // g score is the shortest distance from start to current node,
+                // we need to check if the path we have arrived at this neighbor is the shortest one we have seen yet
+                var gScore = currentNode.g + 1;
+                var gScoreIsBest = false;
+
+                if (!openList.findGraphNode(neighbor)) {
+                    // This is the first time we have arrived at this node,
+                    // it must be the best.
+                    gScoreIsBest = true;
+                    neighbor.h = astar.heuristic(neighbor.pos, end.pos);
+                    openList.push(neighbor);
+                }
+                else if(gScore < neighbor.g) {
+                    // We have already seen the node, but last time it had a worse g (distance from start)
+                    gScoreIsBest = true;
+                }
+
+                if (gScoreIsBest) {
+                    // Found an optimal (so far) path to this node.
+                    // Store info on how we got here and just how good it really is...
+                    neighbor.parent = currentNode;
+                    neighbor.g = gScore;
+                    neighbor.f = neighbor.g + neighbor.h;
+                    neighbor.debug = "F: " + neighbor.f + "<br />G: "+ neighbor.g + "<br />H: " + neighbor.h;
+                }
             }
         }
+
+        // No result was found -- empty array signifies failure to find path
+        return [];
     },
 
-    heuristics: {
-
+    heuristics: function(pos0, pos1) {
+        // This is the Manhattan distance
+        var dx = Math.abs(pos1.x - pos0.x);
+        var dy = Math.abs(pos1.y - pos0.y);
+        return d1 + d2;
     },
 
-    cleanNode: function(node) {
+    neighbors: function(grid, node) {
+        var ret = [];
+        var x = node.pos.x;
+        var y = node.pos.y;
+
+        if (grid[x-1] && grid[x-1][y]) {
+            ret.push(grid[x-1][y]);
+        }
+        if (grid[x+1] && grid[x+1][y]) {
+            ret.push(grid[x+1][y]);
+        }
+        if (grid[x][y-1] && grid[x][y-1]) {
+            ret.push(grid[x][y-1]);
+        }
+        if (grid[x][y+1] && grid[x][y+1]) {
+            ret.push(grid[x][y+1]);
+        }
+        return ret;
 
     }
 };
 
-/**
- * A graph memory structure
- * @param gridIn
- * @param options
- * @constructor
- */
-function Graph(gridIn, options) {
-    options = options || {};
-    this.nodes = [];
-    this.diagonal = !!options.diagonal;
-    this.grid = [];
-    for (var x = 0; x < gridIn.length; x++) {
-        this.grid[x] = [];
-        for (var y = 0, row = gridIn[x]; y < row.length; y++) {
-            var node = new GridNode(x, y, row[y]);
-            this.grid[x][y] = node;
-            this.nodes.push(node);
-        }
-        this.init();
-    }
-}
-
-Graph.prototype.init = function() {
-    this.dirtyNodes = [];
-
-};
-
-Graph.prototype.cleanDirty = function() {
-
-};
-
-Graph.prototype.makeDirty = function() {
-
-};
-
-Graph.prototype.neighbors = function() {
-
-};
-
-Graph.prototype.toString = function() {
-
-};
-
-
-function GridNode(x, y, weight) {
-    this.x = x;
-    this.y = y;
-    this.weight = weight;
-}
-
-GridNode.prototype.toString = function() {
-    return "[" + this.x + " " + this.y + "]";
-};
-
-GridNode.prototype.getCost = function(fromNeighbor) {
-    // Take diagonal weight into consideration
-    if (fromNeighbor && fromNeighbor.x != this.x && fromNeighbor.y != this.y) {
-        return this.weight * 1.41421;
-    }
-    return this.weight;
-};
-
-GridNode.prototype.isWall = function() {
-    return this.weight === 0;
-};
-
-function BinaryHeap(scoreFunction) {
-    this.content = [];
-    this.scoreFunction = scoreFunction;
-}
-
-BinaryHeap.prototype = {
-    push: function(element) {
-        // Add the new element to the end of the array.
-        this.content.push(element);
-
-        // Allow it to sink down.
-        // TODO:
-    },
-
-    pop: function() {
-        // Store the first element so we can return it later.
-        var result = this.content[0];
-        // Get the element at the end of the array.
-        var end = this.content.pop();
-        // If there are any elements left, put the end element at
-        // the start, and let it buddle up.
-        if (this.content.length > 0) {
-            this.content[0] = end;
-            this.bubbleUp(0);
-        }
-        return result;
-    },
-
-    remove: function(node) {
-        var i = this.content.indexOf(node);
-
-        // When it is found, the process seen in 'pop' is repeated
-        // to fill up the hole.
-        var end = this.content.pop();
-
-        if (i !== this.content.length - 1) {
-            this.content[i] = end;
-
-            if (this.scoreFunction(end) < this.scoreFunction(node)) {
-                this.sinkDown(i);
-            }
-            else {
-                this.bubbleUp(i);
-            }
-        }
-    },
-
-    size: function() {
-        return this.content.length;
-    },
-
-    rescoreElement: function(node) {
-        this.sinkDown(this.content.indexOf(node));
-    },
-
-    sinkDown: function(n) {
-        // Fetch the element that has to be sunk
-        var element = this.content[n];
-
-        // When at 0, an element can not sink any further.
-        while (n > 0) {
-
-            // Compute the parent element's index, and fetch it.
-            var parentN = ((n + 1) >> 1) - 1,
-                parent = this.content[parentN];
-
-            // Swap the elements if the parent is greater.
-            if (this.scoreFunction(element) < this.scoreFunction(parent)) {
-                this.content[parentN] = element;
-                this.content[n] = parent;
-                // Update 'n' to continue at the new position.
-                n = parentN;
-            }
-            // Found a parent that is less, no need to sink any further.
-            else {
-                break;
-            }
-        }
-    },
-
-    bubbleUp: function(n) {
-        //
-    }
-
-
-};
 
 

@@ -41,8 +41,11 @@ GraphSearch.prototype.initialize = function() {
         var $row = $("<div class='clear' />");
         $graph.append($row);
 
-        // TODO:
-        //
+        var row = [];
+
+        for (var y = 0; y < this.opts.gridSize; y++) {
+            
+        }
 
     }
 

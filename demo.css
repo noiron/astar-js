@@ -1,5 +1,12 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
 
-
+#content {
+    margin: 0 auto;
+    width: 750px;
+}
 #search_grid {
     width: 650px;
     height: 650px;
@@ -15,5 +22,13 @@
 }
 
 .grid_item.wall {
+    background-color: #9CA6BD;
+}
 
+.grid_item.start {
+    background-color: #FF703F;
+}
+
+.grid_item.active {
+    background-color: #FF703F;
 }

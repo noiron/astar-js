@@ -12,7 +12,7 @@ var astar = {
         }
     },
 
-    search: function(graph, start, end) {
+    search: function(grid, start, end) {
         astar.init(grid);
 
         var openList = [];
@@ -85,11 +85,11 @@ var astar = {
         return [];
     },
 
-    heuristics: function(pos0, pos1) {
+    heuristic: function(pos0, pos1) {
         // This is the Manhattan distance
         var dx = Math.abs(pos1.x - pos0.x);
         var dy = Math.abs(pos1.y - pos0.y);
-        return d1 + d2;
+        return dx + dy;
     },
 
     neighbors: function(grid, node) {

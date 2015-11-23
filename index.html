@@ -71,8 +71,21 @@
                 grid.initialize();
             });
 
-            // TODO:
-            // set option functions
+            $selectWallFrequency.change(function() {
+                grid.setOption({wallFrequency: $(this).val()});
+                grid.initialize();
+            });
+
+            $selectGridSize.change(function() {
+                grid.setOption({gridSize: $(this).val()});
+                grid.initialize();
+            });
+
+            $checkDebug.change(function() {
+                grid.setOption({debug: $(this).attr("checked")});
+            });
+
+
 
 
         });
